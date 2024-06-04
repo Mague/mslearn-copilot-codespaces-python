@@ -17,7 +17,21 @@ app.mount("/ui", StaticFiles(directory=static_path), name="ui")
 class Body(BaseModel):
     length: Union[int, None] = 20
 
+class Text(BaseModel):
+    token: str
 
+# Create a FastAPI endpoint that accepts a POST request with a JSON body containing a single field called "text" and returns a checksum of the text
+@app.post('/checksum')
+def checksum(body: Text):
+    """
+    Generate a checksum of the input text. Example POST request body:
+
+    {
+        "text": "Hello, World!"
+    }
+    """
+    checksum = base64.b64encode(body.token.encode('utf-8')).decode('utf-8')
+    return {'checksum': checksum}    
 @app.get('/')
 def root():
     html_path = join(static_path, "index.html")
